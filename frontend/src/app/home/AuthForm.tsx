@@ -34,8 +34,6 @@ export default function AuthForm({ type }: { type: "signin" | "signup" }) {
         toast.error("Token not provided");
       }
     } catch (error) {
-      console.log(error)
-      console.log(error?.response?.data?.message)
       if (error instanceof AxiosError) toast.error(error.response?.data.message);
       else toast.error("Something went wrong");
     } finally {
