@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { useAuthContext } from "../../context/AuthContext";
 import {
   Dialog,
@@ -19,6 +19,8 @@ import { setQuery } from "@/slices/gstate";
 function Navbar() {
   const { user, isAuthenticated, logout } = useAuthContext();
   const { query } = useSelector((state: RootState) => state.gState);
+  const [isUploadDialogOpen, setIsUploadDialogOpen] = useState<boolean>(false);
+      
   const dispatch = useDispatch();
   return (
     <>
@@ -54,7 +56,7 @@ function Navbar() {
           {/* upload image */}
           {isAuthenticated ? (
             <div className="flex gap-4 justify-center items-center">
-              <Dialog>
+              <Dialog open={isUploadDialogOpen} onOpenChange={setIsUploadDialogOpen} >
                 <DialogTrigger asChild>
                   <Button variant={"secondary"}>Upload</Button>
                 </DialogTrigger>

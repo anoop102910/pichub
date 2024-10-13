@@ -11,17 +11,11 @@ import { getImageUrl } from "@/lib/utils";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { ERROR_IMAGE_URL } from "@/app/constant/constant";
 import { useIncViewsMutation } from "@/services/imageApi";
-interface ImageProps {
-  image: {
-    _id: string;
-    imageUrl: string;
-    name: string;
-    desc: string;
-    views: number;
-  };
-}
+import { Image as ImageType } from "@/types";
 
-function Image({ image }: ImageProps) {
+interface ImageProps extends ImageType {}
+
+function Image({ image }: {image: ImageProps}) {
   const [incViews] = useIncViewsMutation();
   const incrementViews = async (id: string) => {
     try {
@@ -39,12 +33,12 @@ function Image({ image }: ImageProps) {
             className="w-full rounded-md object-cover"
             src={getImageUrl("image", image.imageUrl)}
             alt=""
-            onError={e => {
-              e.currentTarget.src = ERROR_IMAGE_URL;
-            }}
+            // onError={e => {
+            //   e.currentTarget.src = ERROR_IMAGE_URL;
+            // }}
           />
-          <div className="flex items-center gap-2">
-            <span className="text-sm ">{image.name}</span>
+          <div className="flex items-center justify-between">
+            <span className="text-sm ">{image.title.slice(0, 20)}</span>
             <span className=" bg-white px-2 py-1 rounded-md flex items-center gap-1">
               <Eye className="w-4 h-4" />
               {image.views}
@@ -53,11 +47,11 @@ function Image({ image }: ImageProps) {
         </div>
       </DialogTrigger>
       <DialogHeader className="hidden">
-        <DialogTitle>{image.name}</DialogTitle>
+        <DialogTitle>{image.title}</DialogTitle>
         <DialogDescription>{image.desc}</DialogDescription>
       </DialogHeader>
-      <DialogContent>
-        <ScrollArea className="h-[80dvh]">
+      <DialogContent >
+        <ScrollArea className="max-h-[80dvh]">
           <div>
             <img
               className="w-full h-[80%] object-contain"
@@ -68,8 +62,8 @@ function Image({ image }: ImageProps) {
               alt=""
             />
             <div>
-              <span>{image.name}</span>
-              <span>{image.desc}</span>
+              <div className="text-lg font-bold mt-4">{image.title}</div>
+              <div className="mt-2 text-sm text-gray-500">{image.desc}</div>
             </div>
           </div>
         </ScrollArea>

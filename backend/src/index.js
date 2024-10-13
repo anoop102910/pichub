@@ -4,12 +4,18 @@ import cors from "cors";
 import helmet from "helmet";
 import compression from "compression";
 import mongoose from "mongoose";
-
+import rateLimit from "express-rate-limit";
 import { DB_URI } from "./config/config.js";
 import imageRoute from "./routes/image.route.js";
 import authRoute from "./routes/auth.route.js";
 
 const app = express();
+
+const limiter = rateLimit({
+  windowMs: 10 * 60 * 1000,
+  limit: 100,
+  message: "Too many requests from this IP, please try again after 10 minutes",
+});
 
 app.use((req, _, next) => {
   console.log(req.method, req.url);

@@ -22,7 +22,7 @@ function App() {
           </Route>
         </Routes>
       </BrowserRouter>
-      <Toaster />
+      <Toaster position="bottom-center" />
     </>
   );
 }

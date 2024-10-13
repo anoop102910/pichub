@@ -1,12 +1,12 @@
 import mongoose from "mongoose";
 
-const postSchema = new mongoose.Schema({
+const imageSchema = new mongoose.Schema({
   userId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
     required: [true, "User id is required"],
   },
-  name: {
+  title: {
     type: String,
     required: [true, "Name is required"],
     minlength: 3,
@@ -15,9 +15,19 @@ const postSchema = new mongoose.Schema({
     type: String,
     required: [true, "Description is required"],
   },
+  tags: {
+    type: [String],
+    required: [true, "Tags are required"],
+  },
   imageUrl: {
     type: String,
     required: [true, "Image url is required"],
+  },
+  width: {
+    type: Number,
+  },
+  height: {
+    type: Number,
   },
   views: {
     type: Number,
@@ -29,4 +39,4 @@ const postSchema = new mongoose.Schema({
   },
 });
 
-export default mongoose.model("Post", postSchema);
+export default mongoose.model("Image", imageSchema);

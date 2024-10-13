@@ -1,19 +1,10 @@
 import React, { useState, useRef } from "react";
 import toast from "react-hot-toast";
-import api from "@/util/api";
-import { Input } from "../../components/ui/input";
-import { Label } from "../../components/ui/label";
-import { Textarea } from "../../components/ui/textarea";
-import { Button } from "../../components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { Button } from "@/components/ui/button";
 import { useCreateImageMutation } from "@/services/imageApi";
-
-interface UploadProps {
-  selectedImage: File | null;
-  name: string;
-  desc: string;
-  loading: boolean;
-  imageRef: React.RefObject<HTMLInputElement>;
-}
 
 const ImageForm: React.FC = () => {
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
@@ -21,7 +12,7 @@ const ImageForm: React.FC = () => {
   const [desc, setDesc] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
   const imageRef = useRef<HTMLInputElement>(null);
-  const [createImage, { isLoading: isCreating }] = useCreateImageMutation();
+  const [createImage, { isLoading: isPending }] = useCreateImageMutation();
 
   const clearForm = (): void => {
     if (imageRef.current) {
@@ -39,16 +30,9 @@ const ImageForm: React.FC = () => {
         setLoading(true);
         const formData = new FormData();
         formData.append("image", selectedImage);
-        formData.append("name", name);
+        formData.append("title", name);
         formData.append("desc", desc);
         await createImage(formData);
-        // await api.post(
-        //   "api/images",
-        //   { image: selectedImage, name, desc },
-        //   {
-        //     headers: { "Content-Type": "multipart/form-data" },
-        //   }
-        // );
         clearForm();
         toast.success("Image uploaded successfully");
       } catch (error) {
@@ -101,17 +85,21 @@ const ImageForm: React.FC = () => {
           </div>
         </div>
         <div className="mt-4">
-          <Label htmlFor="image-name">Name</Label>
+          <Label htmlFor="title">Title</Label>
           <Input
+            id="title"
+            name="title"
             type="text"
-            placeholder="Enter Image name"
+            placeholder="Enter Image title"
             value={name}
             onChange={e => setName(e.target.value)}
           />
         </div>
         <div className="mt-4">
-          <Label htmlFor="image-desc">Description</Label>
+          <Label htmlFor="desc">Description</Label>
           <Textarea
+            id="desc"
+            name="desc"
             placeholder="Enter Image description"
             value={desc}
             onChange={e => setDesc(e.target.value)}

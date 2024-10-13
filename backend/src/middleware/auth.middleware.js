@@ -2,7 +2,7 @@ import jwt from "jsonwebtoken";
 import { JWT_SECRET_KEY } from "../config/config.js";
 import User from '../models/user.model.js';
 
-const auth = async  (req, res, next) => {
+const authMiddleware = async  (req, res, next) => {
   let token = req.headers["authorization"];
   if (!token)
     return res
@@ -30,4 +30,4 @@ const auth = async  (req, res, next) => {
   
 };
 
-export default auth;
+export default authMiddleware;

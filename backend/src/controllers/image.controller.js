@@ -1,30 +1,36 @@
 import Joi from "joi";
 import Image from "../models/image.model.js";
-import { uploadImageToCloudinary } from "../util/uploadImageToCloudinary.js";
+import { uploadImage } from "../util/uploadImageToCloudinary.js";
 
 const imageSchema = Joi.object({
-  name: Joi.string().required(),
+  title: Joi.string().required(),
   desc: Joi.string(),
+  tags: Joi.array().items(Joi.string()),
 });
 
 export const postImage = async (req, res) => {
   try {
+    console.log("POST IMAGE");
     const image = req.files.image;
     const userId = req.userId;
+    console.log(userId);
 
     const { error, value } = imageSchema.validate(req.body);
-    if (error) return res.status(400).json({ error: error.message });
-    const { name, desc } = value;
+    if (error) return res.status(400).json({ message: error.message });
+    const { title, desc, tags } = value;
 
-    const { url } = await uploadImageToCloudinary(image.data);
+    console.log("Uploading image to cloudinary");
+    const { url, width, height } = await uploadImage(image.data);
+    console.log(width, height, url);
+    console.log("Image uploaded to cloudinary");
     const path = url.split("/").pop();
-    const newImage = new Image({ userId, name, imageUrl: path, desc });
+    const newImage = new Image({ userId, title, imageUrl: path, desc, tags, width, height });
     const response = await newImage.save();
-
-    res.json(response);
+    console.log("Image created successfully");
+    res.status(201).json({ data: response, message: "Image created successfully" });
   } catch (error) {
     console.log(error);
-    res.json(error.message);
+    res.status(500).json({ message: error.message });
   }
 };
 
@@ -33,9 +39,9 @@ export const incrementViews = async (req, res) => {
     console.log("POST INCREMENT VIEWS");
     const { id } = req.params;
     await Image.findByIdAndUpdate(id, { $inc: { views: 1 } });
-    res.json({ message: "Views incremented successfully" });
+    res.status(200).json({ message: "Views incremented successfully" });
   } catch (error) {
-    res.json(error.message);
+    res.status(500).json({ message: error.message });
   }
 };
 
@@ -43,7 +49,7 @@ export const getImages = async (req, res) => {
   const { search, limit = 10, page = 1 } = req.query;
   try {
     const query = {};
-    if (search) query.name = new RegExp(search, "i");
+    if (search) query.title = new RegExp(search, "i");
 
     const count = await Image.countDocuments(query);
     const images = await Image.find(query)
@@ -51,7 +57,7 @@ export const getImages = async (req, res) => {
       .skip(Number(limit) * (Number(page) - 1))
       .exec();
 
-    res.json({
+    res.status(200).json({
       message: "Image fetch success",
       data: images,
       page,
@@ -59,7 +65,6 @@ export const getImages = async (req, res) => {
     });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: error.message });
+    res.status(500).json({ message: error.message });
   }
 };
-

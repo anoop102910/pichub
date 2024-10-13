@@ -28,10 +28,10 @@ export const signup = async (req, res) => {
   try {
     const { value, error } = signupSchema.validate(req.body);
     console.log(error);
-    if (error) return res.status(400).json({ error: error.details[0].message });
+    if (error) return res.status(400).json({ message: error.details[0].message });
     const { name, email, password } = value;
 
-    if (await User.exists({ email })) return res.status(409).json({ error: "User already exists" });
+    if (await User.exists({ email })) return res.status(409).json({ message: "User already exists" });
 
     const user = await User.create({
       name,
@@ -43,24 +43,24 @@ export const signup = async (req, res) => {
     res.status(200).json({ succuss: true, message: "Signin succussful", token });
   } catch (error) {
     console.log(error);
-    res.status(500).json({ error: error.message });
+    res.status(500).json({ message: error.message });
   }
 };
 
 export const signin = async (req, res) => {
   try {
     const { value, error } = signinSchema.validate(req.body);
-    if (error) return res.status(400).json({ error: error.details[0].message });
+    if (error) return res.status(400).json({ message: error.details[0].message });
 
     const { email, password } = value;
 
     let user = await User.findOne({ email }).lean();
 
-    if (!user) return res.status(400).json({ error: "User doesn't exist" });
+    if (!user) return res.status(400).json({ message: "Invalid credentials" });
 
     const isPasswordCorrect = await bcrypt.compare(password, user.password);
 
-    if (!isPasswordCorrect) return res.status(400).json({ error: "Password is incorrect" });
+    if (!isPasswordCorrect) return res.status(400).json({ message: "Invalid credentials" });
 
     const token = signinToken(user);
     if (user.profileImage) tokenVal.profileImage = user.profileImage;
@@ -69,7 +69,7 @@ export const signin = async (req, res) => {
     res.set("Access-Control-Expose-Headers", "Authorization");
     res.status(200).json({ succuss: true, message: "Signin succussfull", token });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    res.status(500).json({ message: error.message });
   }
 };
 

@@ -3,6 +3,7 @@ export interface Image {
   title: string;
   imageUrl: string;
   desc: string;
+  views: number;
 }
 
 export interface ImageData {
