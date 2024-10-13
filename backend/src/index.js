@@ -5,7 +5,7 @@ import helmet from "helmet";
 import compression from "compression";
 import mongoose from "mongoose";
 import rateLimit from "express-rate-limit";
-import { DB_URI } from "./config/config.js";
+import { DB_URI, CLIENT_URI } from "./config/config.js";
 import imageRoute from "./routes/image.route.js";
 import authRoute from "./routes/auth.route.js";
 
@@ -25,7 +25,7 @@ app.use(express.json());
 app.use(fileUpload({ limits: { fileSize: "10*1024*1024" } }));
 app.use(
   cors({
-    origin: "http://localhost:3000",
+    origin: CLIENT_URI,
     methods: "GET, POST, PUT, DELETE",
     credentials: true,
   })
