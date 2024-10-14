@@ -33,8 +33,8 @@ const ImageForm: React.FC = () => {
         formData.append("title", name);
         formData.append("desc", desc);
         await createImage(formData);
-        clearForm();
         toast.success("Image uploaded successfully");
+        clearForm();
       } catch (error) {
         toast.error("Something went wrong");
       } finally {
